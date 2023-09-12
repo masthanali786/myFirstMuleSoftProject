@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f517459e-735e-41d3-b1bc-42b596511982" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="employee-data-apiFlow" doc:id="84961282-3461-4592-a9da-822a5da358b3" >
+		<http:listener doc:name="Listener" doc:id="0bdfaa1a-3382-435b-aa21-898269a6ab65" config-ref="HTTP_Listener_config" path="/employee"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0413f12b-6a45-4657-a25d-f1e8abee9560" message="Sending Data"/>
+		<choice doc:name="Choice" doc:id="6007fbca-ead8-4090-ab83-1d60fdf958d1" >
+			<when expression='#[payload.Name == "Masthan Ali"]'>
+				<ee:transform doc:name="Transform Message" doc:id="f5579c4a-415b-4180-98aa-39af36abc259" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-payload value="#[payload]" doc:name="Set Payload" doc:id="f118a9bf-ced1-4f49-9a84-bf89c4e063a2" />
+			</when>
+			<when expression='#[payload.Name == "Sushma"]'>
+				<ee:transform doc:name="Transform Message" doc:id="50361784-9f5f-48ae-9a97-a3080176cd62" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-payload value='#["Sushma is a employee in your organisation"]' doc:name="Set Payload" doc:id="cbdd816a-708e-4c27-80a4-8c8a1e639668" />
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="368874ad-fc23-42b0-8595-035251fc388d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<set-payload value='#["Ne employees are there"]' doc:name="Set Payload" doc:id="8c365879-8ae5-4baf-83da-cbba7c8e08e7" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="e148eff7-f89c-4796-8de6-b26e007fda30" message="#[payload]"/>
+	</flow>
+</mule>
